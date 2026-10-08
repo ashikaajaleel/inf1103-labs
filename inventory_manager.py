@@ -18,28 +18,28 @@ def load_inventory():
                         (int(order_number), order_name, int(stock_quantity))
                     )
     except FileNotFoundError:
-        print("Inventory file not found. Starting with empty inventory.")
+        print("\nInventory file not found. Starting with empty inventory.")
     return inventory, transaction_history
     
 def calculate_tax(amount):
     return amount * 0.1
 
 def add_product():
-    order_name = input("Enter the order name: ")
+    order_name = input("\nEnter the order name: ")
     if order_name.lower() == 'quit':
         return 'quit', 'quit'
     else:
-        stock_quantity = input("Enter the stock quantity: ")
+        stock_quantity = input("\nEnter the stock quantity: ")
         if stock_quantity.isdigit():
             return order_name, int(stock_quantity)
         else:
             return 'nill', 'invalid'
 
 def update_stock(inventory):
-    product_id = input("Enter the order name to update: ")
+    product_id = input("\nEnter the order name to update: ")
     for product in inventory:
         if product["id"] == product_id:
-            print(f'Product Found\n Name:{product['name']}\n Current Stock:{product['stock']}')
+            print(f'\nProduct Found\n Name:{product['name']}\n Current Stock:{product['stock']}')
             new_stock = input("Enter the new stock quantity: ")
             if new_stock.isdigit():
                 return product_id, int(new_stock)
@@ -50,6 +50,20 @@ def update_stock(inventory):
     else:
         print("Product not found.")
         return
+
+def display_all(inventory):
+    print("\nCurrent Inventory:")
+    for product in inventory:
+        print(f'ID: {product["id"]} | Name: {product["name"]} | Price: ${product["price"]:.2f} | Stock: {product["stock"]}')
+
+def search_product(inventory):
+    product_id = input("\nEnter product ID to search:")
+    for product in inventory:
+        if product["id"] == product_id:
+            print(f'\nProduct Found\n ID: {product["id"]}\n Name: {product["name"]}\n Price: ${product["price"]:.2f}\n Stock: {product["stock"]}')
+            return
+    else:
+        print("Product not found.")
 
 
 def process_delivery(current_total,new_value):
