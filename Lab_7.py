@@ -1,23 +1,27 @@
 import json
-INVENTORY_FILE = "inventory.json"
+INVENTORY_FILE = "inventory_lab7.json"
 
 from products import Product, PhysicalProduct, DigitalProduct
 from inventory import Inventory
-
-
-
 
 #file handling functions
 def save_inventory(inventory):
     data = []
 
     for product in inventory.get_all_products():
-        data.append({
+        item = {
+            "type": product.get_type(),
             "product_id": product.get_product_id(),
             "name": product.get_name(),
             "price": product.get_price(),
             "stock": product.get_stock()
-        })
+        }
+
+    if product.get_type() == "physical":
+        item["weight"] = product.get_weight()
+    elif product.get_type() == "digital":
+        item["download_size"] = product.get_download_size()
+    data.append(item)
 
     with open(INVENTORY_FILE, "w") as f:
         json.dump(data,f,indent=4)
@@ -31,9 +35,14 @@ def load_inventory(inventory):
         print("Inventory file not found.")
         return
 
-        for item in data:
-            product = Product(item["product_id"], item["name"], item["price"], item["stock"])
-            inventory.add_product(product)
+    for item in data:
+        if item["type"] == "physical":
+            product = PhysicalProduct(item["product_id"], item["name"], item["price"], item["stock"], item["weight"])
+        elif item["type"] == "digital":
+            product = DigitalProduct(item["product_id"], item["name"], item["price"], item["stock"], item["download_size"])
+        else:
+            continue 
+        inventory.add_product(product)
 
 
 #main function to run the program
@@ -55,7 +64,15 @@ def main():
             name = input("Name:  ")
             price = float(input("Price:  "))
             stock = int(input("Stock:  "))
-            inventory.add_product(Product(product_id, name, price, stock))
+            option  = input(f"Select which type of product you would like to add:\n1. Physical Product\n2. Digital Product\n")
+            if option == "1":
+                weight = float(input("Weight:  "))
+                inventory.add_product(PhysicalProduct(product_id, name, price, stock, weight))
+            elif option == "2":
+                download_size = int(input("Download Size:  "))
+                inventory.add_product(DigitalProduct(product_id, name, price, stock, download_size))
+            else:
+                print("Invalid option.")
             print("Product added, yay!")
 
         elif choice == "3":

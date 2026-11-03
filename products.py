@@ -1,5 +1,6 @@
-#manage 1 product information
-class Product:
+from abc import ABC, abstractmethod
+
+class Product(ABC):
     def __init__(self, product_id, name, price, stock):
         self.__product_id = product_id
         self.__name = name
@@ -27,8 +28,16 @@ class Product:
     def display_information(self):
         print(f"{self.__product_id} | {self.__name} | ${self.__price:.2f} | {self.__stock}")
 
+    @abstractmethod
+    def get_fulfilment_info(self):
+        pass
 
-class PhysicalProduct(Product):
+class CanBeShipped(ABC):
+    @abstractmethod
+    def calculate_shipping_cost(self):
+        pass
+
+class PhysicalProduct(Product, CanBeShipped):
     def __init__(self, product_id, name, price, stock, weight):
         super().__init__(product_id, name, price, stock)  #parent class product
         self.__weight = weight                            #child class physical product
@@ -37,11 +46,32 @@ class PhysicalProduct(Product):
         super().display_information()
         print(f"Weight: {self.__weight} kg")
 
-class DigitalProduct(Product):
-    def __init__(self, product_id, name, price, stock, file_size):
+    def get_fulfilment_info(self):
+        return "Requires physical shipping."
+
+    def calculate_shipping_cost(self):
+        return self.__weight * 5  # Example shipping cost calculation based on weight
+
+    def get_weight(self):
+        return self.__weight
+
+    def get_type(self):
+        return "physical"
+
+class DigitalProduct(Product, CanBeShipped):
+    def __init__(self, product_id, name, price, stock, download_size):
         super().__init__(product_id, name, price, stock)  #parent class product
-        self.__file_size = file_size                      #child class digital product
+        self.__download_size = download_size       #child class digital product
 
     def display_information(self):
         super().display_information()
-        print(f"File Size: {self.__file_size} MB")
+        print(f"Download Size: {self.__download_size} MB")
+
+    def get_fulfilment_info(self):
+        return "Delivered digitally."
+
+    def get_download_size(self):
+        return self.__download_size
+
+    def get_type(self):
+        return "digital"
