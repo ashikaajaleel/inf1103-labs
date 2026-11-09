@@ -3,6 +3,7 @@ INVENTORY_FILE = "inventory_lab7.json"
 
 from products import Product, PhysicalProduct, DigitalProduct
 from inventory import Inventory
+from supplier import Supplier
 
 #file handling functions
 def save_inventory(inventory):
