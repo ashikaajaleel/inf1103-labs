@@ -43,7 +43,14 @@ def load_inventory(inventory, suppliers: dict[str, Supplier]) -> None:
         return
 
     for item in data:
-        supplier = get_supplier(suppliers, item["supplier_id"], item.get("supplier_name", ""), item.get("supplier_email", ""))
+        supplier_id = item.get("supplier_id", "S000")
+
+        supplier = get_supplier(
+            suppliers,
+            supplier_id,
+            item.get("supplier_name", "Unknown Supplier"),
+            item.get("supplier_email", "unknown@example.com")
+        )
         if item["type"] == "physical":
             product = PhysicalProduct(item["product_id"], item["name"], item["price"], item["stock"], item["weight"], supplier=supplier)
         elif item["type"] == "digital":
