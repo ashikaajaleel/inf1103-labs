@@ -1,0 +1,10 @@
+[
+    {
+        "type": "physical",
+        "product_id": "001",
+        "name": "Pens",
+        "price": 2.3,
+        "stock": 200,
+        "weight": 0.2
+    }
+]

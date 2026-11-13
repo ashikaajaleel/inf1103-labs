@@ -1,12 +1,18 @@
 import json
-INVENTORY_FILE = "inventory_lab7.json"
-
-from products import Product, PhysicalProduct, DigitalProduct
+INVENTORY_FILE = "inventory_lab8.json"
+from products import PhysicalProduct, DigitalProduct
 from inventory import Inventory
 from supplier import Supplier
 
+#retrieve supplier from the suppliers dictionary or create a new one if it doesn't exist
+def get_supplier(suppliers: dict[str, Supplier], supplier_id: str,
+                 name: str, email: str) -> Supplier:
+    if supplier_id not in suppliers:
+        suppliers[supplier_id] = Supplier(supplier_id, name, email)
+    return suppliers[supplier_id]
+
 #file handling functions
-def save_inventory(inventory):
+def save_inventory(inventory) -> None:
     data = []
 
     for product in inventory.get_all_products():
@@ -28,7 +34,7 @@ def save_inventory(inventory):
         json.dump(data,f,indent=4)
     print("Inventory saved successfully!")
 
-def load_inventory(inventory):
+def load_inventory(inventory, suppliers: dict[str, Supplier]) -> None:
     try:
      with open(INVENTORY_FILE, "r") as f:
         data = json.load(f)
@@ -37,19 +43,21 @@ def load_inventory(inventory):
         return
 
     for item in data:
+        supplier = get_supplier(suppliers, item["supplier_id"], item.get("supplier_name", ""), item.get("supplier_email", ""))
         if item["type"] == "physical":
-            product = PhysicalProduct(item["product_id"], item["name"], item["price"], item["stock"], item["weight"])
+            product = PhysicalProduct(item["product_id"], item["name"], item["price"], item["stock"], item["weight"], supplier=supplier)
         elif item["type"] == "digital":
-            product = DigitalProduct(item["product_id"], item["name"], item["price"], item["stock"], item["download_size"])
+            product = DigitalProduct(item["product_id"], item["name"], item["price"], item["stock"], item["download_size"], supplier=supplier)
         else:
             continue 
         inventory.add_product(product)
 
 
 #main function to run the program
-def main():
+def main() -> None:
     inventory = Inventory()
-    load_inventory(inventory)
+    suppliers: dict[str, Supplier] = {}
+    load_inventory(inventory,suppliers)
 
 
     while True:
@@ -65,13 +73,17 @@ def main():
             name = input("Name:  ")
             price = float(input("Price:  "))
             stock = int(input("Stock:  "))
+            supplier_id = input("Supplier ID:  ")
+            supplier_name = input("Supplier Name:  ")
+            supplier_email = input("Supplier Email:  ")
+            supplier = get_supplier(suppliers,supplier_id, supplier_name, supplier_email)
             option  = input(f"Select which type of product you would like to add:\n1. Physical Product\n2. Digital Product\n")
             if option == "1":
                 weight = float(input("Weight:  "))
-                inventory.add_product(PhysicalProduct(product_id, name, price, stock, weight))
+                inventory.add_product(PhysicalProduct(product_id, name, price, stock, weight,supplier))
             elif option == "2":
                 download_size = int(input("Download Size:  "))
-                inventory.add_product(DigitalProduct(product_id, name, price, stock, download_size))
+                inventory.add_product(DigitalProduct(product_id, name, price, stock, download_size, supplier))
             else:
                 print("Invalid option.")
             print("Product added, yay!")

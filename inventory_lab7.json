@@ -1,10 +1,18 @@
 [
     {
         "type": "physical",
-        "product_id": "001",
-        "name": "pens",
-        "price": 2.7,
-        "stock": 101,
-        "weight": 0.4
+        "product_id": "003",
+        "name": "Markers",
+        "price": 2.5,
+        "stock": 300,
+        "weight": 0.2
+    },
+    {
+        "type": "physical",
+        "product_id": "004",
+        "name": "Pens",
+        "price": 2.4,
+        "stock": 100,
+        "weight": 0.3
     }
 ]
